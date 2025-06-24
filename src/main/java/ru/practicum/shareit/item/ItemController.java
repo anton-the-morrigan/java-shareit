@@ -11,14 +11,15 @@ import java.util.Collections;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
+    private final String userIdHeader = "X-Sharer-User-Id";
 
     @PostMapping
-    public Item createItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto itemDto) {
+    public Item createItem(@RequestHeader(userIdHeader) Long userId, @RequestBody ItemDto itemDto) {
         return itemService.createItem(itemDto, userId);
     }
 
     @PatchMapping("/{id}")
-    public Item updateItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto itemDto, @PathVariable Long id) {
+    public Item updateItem(@RequestHeader(userIdHeader) Long userId, @RequestBody ItemDto itemDto, @PathVariable Long id) {
         return itemService.updateItem(userId, itemDto, id);
     }
 
@@ -28,7 +29,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public Collection<Item> showAllItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public Collection<Item> showAllItems(@RequestHeader(userIdHeader) Long userId) {
         return itemService.showAllItems(userId);
     }
 

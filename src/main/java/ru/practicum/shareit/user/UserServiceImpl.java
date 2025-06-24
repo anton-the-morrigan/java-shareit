@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
         }
         for (User user : users.values()) {
             if (user.getEmail().equals(userForValidation.getEmail()) && !Objects.equals(user.getId(), userForValidation.getId())) {
-                throw new DuplicatedDataException("Данная электронная почта уже зарегестрированна");
+                throw new DuplicatedDataException("Указанная электронная почта уже зарегестрированна в системе");
             }
         }
     }
