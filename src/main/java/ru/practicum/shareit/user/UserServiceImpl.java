@@ -2,35 +2,33 @@ package ru.practicum.shareit.user;
 
 import lombok.Data;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.error.exception.DuplicatedDataException;
 import ru.practicum.shareit.error.exception.NotFoundException;
 import ru.practicum.shareit.error.exception.ValidationException;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Objects;
 
 @Service
 @Data
 public class UserServiceImpl implements UserService {
     UserMapper userMapper;
+    UserRepository repository;
 
-    HashMap<Long, User> users = new HashMap<>();
-
-    public UserServiceImpl(UserMapper userMapper) {
+    public UserServiceImpl(UserMapper userMapper, UserRepository repository) {
         this.userMapper = userMapper;
+        this.repository = repository;
     }
 
+    @Override
     public User createUser(UserDto userDto) {
         User user = userMapper.toUser(userDto);
         userValidator(user);
-        user.setId(getNextId());
-        users.put(user.getId(), user);
+        repository.save(user);
         return user;
     }
 
+    @Override
     public User updateUser(UserDto userDto, Long id) {
-        User oldUser = users.get(id);
+        User oldUser = repository.findById(id).get();
         User newUser = userMapper.toUser(userDto);
         if (newUser.getName() != null) {
             oldUser.setName(newUser.getName());
@@ -39,23 +37,26 @@ public class UserServiceImpl implements UserService {
             oldUser.setEmail(newUser.getEmail());
         }
         userValidator(oldUser);
+        repository.save(oldUser);
         return oldUser;
-
     }
 
+    @Override
     public User showUser(Long id) {
-        if (!users.containsKey(id)) {
+        if (!repository.existsById(id)) {
             throw new NotFoundException(String.format("Пользователь с id %d не найден", id));
         }
-        return users.get(id);
+        return repository.findById(id).get();
     }
 
+    @Override
     public Collection<User> showAllUsers() {
-        return users.values();
+        return repository.findAll();
     }
 
+    @Override
     public void deleteUser(Long id) {
-        users.remove(id);
+        repository.deleteById(id);
     }
 
     private void userValidator(User userForValidation) {
@@ -65,15 +66,5 @@ public class UserServiceImpl implements UserService {
         if (!userForValidation.getEmail().contains("@")) {
             throw new ValidationException("Не верный формат электронной почты");
         }
-        for (User user : users.values()) {
-            if (user.getEmail().equals(userForValidation.getEmail()) && !Objects.equals(user.getId(), userForValidation.getId())) {
-                throw new DuplicatedDataException("Указанная электронная почта уже зарегестрированна в системе");
-            }
-        }
-    }
-
-    private long getNextId() {
-        long currentMaxId = users.keySet().stream().mapToLong(id -> id).max().orElse(0);
-        return ++currentMaxId;
     }
 }

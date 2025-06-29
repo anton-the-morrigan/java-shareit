@@ -17,4 +17,19 @@ public class ItemMapper {
         item.setRequest(itemDto.getRequest());
         return item;
     }
+
+    public ItemWithComments toItemWithComments(Item item) {
+        return new ItemWithComments(item.getId(), item.getName(), item.getDescription(), item.getAvailable(), item.getOwner(), item.getRequest(), null, null, null);
+    }
+
+    public Item toSimpleItem(ItemWithComments itemWithComments) {
+        Item item = new Item();
+        item.setId(itemWithComments.getId());
+        item.setName(itemWithComments.getName());
+        item.setDescription(itemWithComments.getDescription());
+        item.setAvailable(itemWithComments.getAvailable());
+        item.setOwner(itemWithComments.getOwner());
+        item.setRequest(itemWithComments.getRequest());
+        return item;
+    }
 }

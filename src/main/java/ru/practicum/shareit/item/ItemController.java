@@ -24,8 +24,8 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public Item showItem(@PathVariable Long id) {
-        return itemService.showItem(id);
+    public ItemWithComments showItem(@RequestHeader(userIdHeader) Long userId, @PathVariable Long id) {
+        return itemService.showItem(userId, id);
     }
 
     @GetMapping
@@ -40,5 +40,10 @@ public class ItemController {
         } else {
             return itemService.findItems(text);
         }
+    }
+
+    @PostMapping("/{id}/comment")
+    public Comment createComment(@RequestHeader(userIdHeader) Long userId, @RequestBody Comment comment, @PathVariable Long id) {
+        return itemService.createComment(userId, comment, id);
     }
 }
