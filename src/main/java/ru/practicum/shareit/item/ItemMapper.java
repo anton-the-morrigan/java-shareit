@@ -1,12 +1,17 @@
 package ru.practicum.shareit.item;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.error.exception.NotFoundException;
+import ru.practicum.shareit.request.ItemRequestRepository;
 
+@RequiredArgsConstructor
 @Component
 public class ItemMapper {
+    private final ItemRequestRepository itemRequestRepository;
 
     public ItemDto toItemDto(Item item) {
-        return new ItemDto(item.getName(), item.getDescription(), item.getAvailable(), item.getRequest());
+        return new ItemDto(item.getName(), item.getDescription(), item.getAvailable(), item.getRequest().getId());
     }
 
     public Item toItem(ItemDto itemDto) {
@@ -14,7 +19,9 @@ public class ItemMapper {
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
-        item.setRequest(itemDto.getRequest());
+        if (itemDto.requestId != null) {
+            item.setRequest(itemRequestRepository.findById(itemDto.requestId).get());
+        }
         return item;
     }
 

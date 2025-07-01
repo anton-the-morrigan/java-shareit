@@ -13,7 +13,6 @@ public interface BookingRepository  extends JpaRepository<Booking, Long> {
             "ORDER BY b.start_date DESC", nativeQuery = true)
     Collection<Booking> findAllBookingsByBookerId(Long userId);
 
-
     @Query(value = "SELECT b.* FROM bookings as b " +
             "JOIN items as i ON i.id = b.item_id " +
             "WHERE b.booker_id = ?1 " +
@@ -27,7 +26,6 @@ public interface BookingRepository  extends JpaRepository<Booking, Long> {
             "AND b.end_date < ?2 " +
             "ORDER BY b.start_date DESC", nativeQuery = true)
     Collection<Booking> findAllPastBookingsByBookerId(Long bookerId, LocalDateTime currentTime);
-
 
     @Query(value = "SELECT b.* FROM bookings as b " +
             "JOIN items as i ON i.id = b.item_id " +
