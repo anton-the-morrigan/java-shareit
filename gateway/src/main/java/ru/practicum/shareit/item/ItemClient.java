@@ -39,6 +39,6 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> createComment(Long userId, Comment comment, Long id) {
-        return post("/" + id + "/comment", userId, comment);
+        return post(String.format("/%d/comment", id), userId, comment);
     }
 }
